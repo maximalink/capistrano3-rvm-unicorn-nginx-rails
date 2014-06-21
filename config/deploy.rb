@@ -31,7 +31,6 @@ set(:config_files, %w(
   nginx.conf
   database.example.yml
   log_rotation
-  monit
   unicorn.rb
   unicorn_init.sh
 ))
@@ -50,20 +49,16 @@ set(:executable_config_files, %w(
 # tag and then add it at run time.
 set(:symlinks, [
   {
-    source: "nginx.conf",
-    link: "/etc/nginx/sites-enabled/{{full_app_name}}"
+    source: 'nginx.conf',
+    link: '/etc/nginx/sites-enabled/{{full_app_name}}'
   },
   {
-    source: "unicorn_init.sh",
-    link: "/etc/init.d/unicorn_{{full_app_name}}"
+    source: 'unicorn_init.sh',
+    link: '/etc/init.d/unicorn'
   },
   {
-    source: "log_rotation",
-   link: "/etc/logrotate.d/{{full_app_name}}"
-  },
-  {
-    source: "monit",
-    link: "/etc/monit/conf.d/{{full_app_name}}.conf"
+    source: 'log_rotation',
+    link: '/etc/logrotate.d/{{full_app_name}}'
   }
 ])
 
@@ -74,9 +69,9 @@ set(:symlinks, [
 
 namespace :deploy do
   # make sure we're deploying what we think we're deploying
-  before :deploy, "deploy:check_revision"
+  before :deploy, 'deploy:check_revision'
   # only allow a deploy with passing tests to deployed
-  before :deploy, "deploy:run_tests"
+  before :deploy, 'deploy:run_tests'
   # compile assets locally then rsync
   after 'deploy:symlink:shared', 'deploy:compile_assets_locally'
   after :finishing, 'deploy:cleanup'
@@ -91,7 +86,7 @@ namespace :deploy do
 
   # Restart monit so it will pick up any monit configurations
   # we've added
-  after 'deploy:setup_config', 'monit:restart'
+  #after 'deploy:setup_config', 'monit:restart'
 
   # As of Capistrano 3.1, the `deploy:restart` task is not called
   # automatically.
